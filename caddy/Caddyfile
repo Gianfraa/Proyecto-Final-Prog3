@@ -1,0 +1,16 @@
+:80 {
+	# API del backend
+	handle /api/* {
+		reverse_proxy backend:3001
+	}
+
+	# Health check
+	handle /health {
+		reverse_proxy backend:3001
+	}
+
+	# Frontend (React dev server + WebSocket para hot reload)
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
