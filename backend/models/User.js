@@ -36,15 +36,15 @@ module.exports = (sequelize) => {
     timestamps: true,
     hooks: {
       beforeCreate: async (user) => {
-        // TODO: Hashear la contraseña antes de guardar el usuario.
-        // Pista: usar bcrypt.hash() con 10 rondas de salt.
+        // Hashear la contraseña antes de guardar el usuario
+        user.password = await bcrypt.hash(user.password, 10);
       }
     }
   });
 
   User.prototype.validarPassword = async function (password) {
-    // TODO: Comparar la contraseña recibida con el hash almacenado.
-    // Pista: usar bcrypt.compare()
+    // Comparar la contraseña recibida con el hash almacenado
+    return bcrypt.compare(password, this.password);
   };
 
   User.prototype.toJSON = function () {
