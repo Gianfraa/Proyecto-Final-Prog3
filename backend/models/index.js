@@ -1,3 +1,5 @@
+require('ts-node').register({ transpileOnly: true });
+
 const { Sequelize } = require('sequelize');
 const config = require('../config/database');
 
