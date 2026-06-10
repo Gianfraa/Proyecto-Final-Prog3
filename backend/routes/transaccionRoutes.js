@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getTransacciones, getHistorial, postNuevaTransaccion, putTransaccion, deleteTransaccion} = require('../controllers/transaccionController');
 const { verificarToken } = require('../middleware/auth');
-const { validarTransaccion } = require('../middleware/transaccion-validator.middleware');
+const { validateTransaccion } = require('../middleware/transaccion');
 
 // Todas las rutas de transacciones requieren autenticación
 router.use(verificarToken);
@@ -14,10 +14,10 @@ router.get('/', getTransacciones);
 router.get('/historial', getHistorial);
 
 // POST /api/transacciones - Crear nuevas transacciones
-router.get('/', validarTransaccion, postNuevaTransaccion);
+router.post('/', validateTransaccion, postNuevaTransaccion);
 
 // PUT /api/transacciones/:id - Modificar una transaccion por id
-router.put('/:id', validarTransaccion, putTransaccion);
+router.put('/:id', validateTransaccion, putTransaccion);
 
 // DELETE /api/transacciones/:id - Eliminar una transaccion por id
 router.delete('/:id', deleteTransaccion);
