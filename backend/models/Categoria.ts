@@ -1,17 +1,11 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
+import { InterfaceCategoria } from './interfaces/categoria.interface';
 
-interface CategoriaAttributes {
-  id: number;
-  nombre: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-interface CategoriaCreationAttributes extends Optional<CategoriaAttributes, 'id'> {}
+interface CategoriaCreationAttributes extends Optional<InterfaceCategoria, 'id'> {}
 
 class Categoria
-  extends Model<CategoriaAttributes, CategoriaCreationAttributes>
-  implements CategoriaAttributes
+  extends Model<InterfaceCategoria, CategoriaCreationAttributes>
+  implements InterfaceCategoria
 {
   public id!: number;
   public nombre!: string;
