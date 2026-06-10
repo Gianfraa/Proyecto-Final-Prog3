@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authRoutes = require('./auth');
-const transaccionRoutes = require('./transaccion');
+const transaccionRoutes = require('./transaccionRoutes');
 const categoriaRoutes = require('./categoriaRoutes');
 
 router.get('/health', (req, res) => {
