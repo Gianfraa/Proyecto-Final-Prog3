@@ -153,4 +153,57 @@ const postNuevaTransaccion = async (req, res) => {
   }
 };
 
-module.exports = { getTransacciones, getHistorial, postNuevaTransaccion };
+// PUT /api/transacciones/:id
+const putTransaccion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { descripcion, monto, tipo, fecha, categoriaId } = req.body;
+
+    const transaccion = await Transaccion.findOne({ where: { id, userId } });
+
+    if (!transaccion) {
+      return res.status(404).json({ error: 'Transacción no encontrada' });
+    }
+
+    await transaccion.update({
+      descripcion,
+      monto,
+      tipo,
+      fecha: fecha ? new Date(fecha) : new Date(),
+      categoriaId: categoriaId || null
+    });
+
+    await transaccion.reload({
+      include: [{ model: Categoria, as: 'categoria', attributes: ['id', 'nombre'] }]
+    });
+
+    res.json({ data: transaccion });
+  } catch (error) {
+      console.error('Error en putTransaccion:', error);
+    res.status(500).json({ error: 'Error al actualizar transacción' });
+  }
+};
+
+// DELETE /api/transacciones/:id
+const deleteTransaccion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const transaccion = await Transaccion.findOne({ where: { id, userId } });
+
+    if (!transaccion) {
+      return res.status(404).json({ error: 'Transacción no encontrada' });
+    }
+
+    await transaccion.destroy();
+
+    res.json({ message: 'Transacción eliminada correctamente' });
+  } catch (error) {
+    console.error('Error en deleteTransaccion:', error);
+    res.status(500).json({ error: 'Error al eliminar transacción' });
+  }
+};
+
+module.exports = { getTransacciones, getHistorial, postNuevaTransaccion, putTransaccion, deleteTransaccion };
