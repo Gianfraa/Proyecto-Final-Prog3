@@ -1,15 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const { getTransacciones, getHistorial } = require('../controllers/transaccion.controller');
+const { getTransacciones, getHistorial, postNuevaTransaccion, putTransaccion, deleteTransaccion} = require('../controllers/transaccion.controller');
 const { verificarToken } = require('../middleware/auth-validator.middleware');
+const { validarTransaccion } = require('../middleware/transaccion-validator.middleware');
 
 // Todas las rutas de transacciones requieren autenticación
 router.use(verificarToken);
 
-// GET /api/transacciones
+// GET /api/transacciones - Mostrar todas las transacciones
 router.get('/', getTransacciones);
 
-// GET /api/transacciones/historial - Resumen agrupado por mes
+// GET /api/historial - Resumen agrupado por mes
 router.get('/historial', getHistorial);
+
+// POST /api/transacciones - Crear nuevas transacciones
+router.get('/', validarTransaccion, postNuevaTransaccion);
+
+// PUT /api/transacciones/:id - Modificar una transaccion por id
+router.put('/:id', validarTransaccion, putTransaccion);
+
+// DELETE /api/transacciones/:id - Eliminar una transaccion por id
+router.delete('/:id', deleteTransaccion);
 
 module.exports = router;
