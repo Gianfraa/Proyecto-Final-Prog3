@@ -1,4 +1,5 @@
-// backend/models/index.js
+require('ts-node').register({ transpileOnly: true });
+
 const { Sequelize } = require('sequelize');
 const config = require('../config/database');
 
@@ -19,11 +20,24 @@ const sequelize = new Sequelize(
   }
 );
 
-const UserModel = require('./User');
+const UserModel     = require('./User');
+const initCategoria = require('./Categoria').default;
+const initTransaccion = require('./Transaccion').default;
+
 const User = UserModel(sequelize);
+const Categoria = initCategoria(sequelize);
+const Transaccion = initTransaccion(sequelize);
+
+const models = { User, Categoria, Transaccion };
+
+Object.values(models).forEach((model) => {
+  if (typeof model.associate === 'function') {
+    model.associate(models);
+  }
+});
 
 module.exports = {
   sequelize,
   Sequelize,
-  User
+  ...models,
 };

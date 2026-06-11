@@ -1,1 +1,1 @@
-database:5432:*:app_user:app_password
+database:5432:*:gastos_user:gastos_password
