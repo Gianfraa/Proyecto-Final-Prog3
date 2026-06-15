@@ -30,7 +30,7 @@ export class User
     }
 
     public toJSON(): object {
-        const values = this.get({ plain: true }) as { [key: string]: unknown };
+        const values = this.get({ plain: true }) as unknown as { [key: string]: unknown };
 
         delete values.password;
 
