@@ -49,6 +49,9 @@ jspm_packages/
 
 # TypeScript cache
 *.tsbuildinfo
+*.js
+*.js.map
+*.d.ts
 
 # Optional npm cache directory
 .npm
@@ -96,7 +99,17 @@ temp/
 
 # Logs
 logs
+logs/
 *.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
 
 # Database
 *.sqlite
@@ -165,7 +178,3 @@ public/uploads/
 
 # Local development
 .local
-
-# Claude Code
-.claude/
-CLAUDE.md
