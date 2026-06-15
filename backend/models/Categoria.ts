@@ -1,24 +1,19 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
+import { InterfaceCategoria } from './interfaces/categoria.interface';
+import { Transaccion } from './Transaccion';
 
-interface CategoriaAttributes {
-  id: number;
-  nombre: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+interface CategoriaCreationAttributes extends Optional<InterfaceCategoria, 'id'> {}
 
-interface CategoriaCreationAttributes extends Optional<CategoriaAttributes, 'id'> {}
-
-class Categoria
-  extends Model<CategoriaAttributes, CategoriaCreationAttributes>
-  implements CategoriaAttributes
+export class Categoria
+  extends Model<InterfaceCategoria, CategoriaCreationAttributes>
+  implements InterfaceCategoria
 {
   public id!: number;
   public nombre!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  static associate(models: any) {
+  static associate(models: { Categoria?: typeof Categoria; Transaccion?: typeof Transaccion;}) {
     if (models.Transaccion) {
       Categoria.hasMany(models.Transaccion, {
         foreignKey: 'categoria_id',
