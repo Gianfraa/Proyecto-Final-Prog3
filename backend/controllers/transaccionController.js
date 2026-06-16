@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Transaccion, Categoria } = require('../models');
+const { Transaccion, Categoria } = require('../dist/models');
 
 // GET /api/transacciones
 

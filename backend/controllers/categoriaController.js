@@ -1,4 +1,4 @@
-const { Categoria } = require('../models');
+const { Categoria } = require('../dist/models');
 const { limpiarNombre, existeNombreDuplicado } = require('../utils/categoriaHelpers');
 
 const crearCategoria = async (req, res) => {
