@@ -203,7 +203,7 @@ cd Proyecto-Final-Prog3
 cp .env.example .env
 
 # Levantar todos los servicios
-docker compose up --build
+docker compose up -d --build
 ```
 
 ### Servicios disponibles
@@ -227,6 +227,48 @@ docker compose down -v
 ```
 
 ---
+
+## Notas de build, `dist/` y archivos requeridos
+
+Pequeñas aclaraciones sobre el flujo de desarrollo y build para evitar errores comunes:
+
+- `dist/` es la carpeta generada por la compilación de TypeScript y **no debe subirse** al repositorio.
+- El contenedor/backend ejecuta archivos JavaScript desde `dist/` cuando se usa el build; si `dist/` no existe, el servidor puede fallar con `MODULE_NOT_FOUND`.
+
+Archivos que deben estar en el repo (y por qué):
+
+- `backend/copy-config.js` — script que copia `config/*.js` a `dist/config/` después de compilar. Es parte del proceso de build y debe versionarse.
+- `backend/package-lock.json` — debe versionarse para fijar versiones de dependencias y garantizar instalaciones reproducibles.
+- `backend/utils/categoriaHelpers.ts` — fuente en TypeScript; temporalmente mantenemos `backend/utils/categoriaHelpers.js` compilado en el repo para compatibilidad runtime con los controladores actuales.
+
+Comandos recomendados
+
+```bash
+# Instalar dependencias (local)
+npm install
+
+# Compilar TypeScript a dist/ y ejecutar copy-config.js
+npm run build
+
+# Levantar todo con Docker (recomendado para reproducibilidad)
+docker compose up -d --build
+
+# Ver logs del backend
+docker compose logs backend --tail 50 -f
+```
+
+Pasos para colaboradores (rápido)
+
+1. `git pull`
+2. `npm install`
+3. `docker compose up -d --build` (o `npm run build` + `npm start` si trabajan sin Docker)
+
+Problemas comunes y soluciones rápidas
+
+- `ECONNREFUSED 127.0.0.1:3001`: el backend no está listo o está caído; ejecutar `docker compose ps` y `docker compose logs backend --tail 50`.
+- `socket hang up`: la conexión se cerró porque el backend crasheó al recibir la petición; revisar logs del backend para la excepción.
+- `MODULE_NOT_FOUND '../utils/categoriaHelpers'`: asegurarse de que exista `backend/utils/categoriaHelpers.js` o ejecutar `npm run build` para generar los artefactos en `dist/`.
+
 
 ## Ramas Git
 
