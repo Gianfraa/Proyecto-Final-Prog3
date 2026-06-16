@@ -82,7 +82,7 @@ const getTransacciones = async (req, res) => {
 const getHistorial = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { sequelize } = require('../models');
+    const { sequelize } = require('../dist/models');
 
     // Agrupar por año y mes, calcular totales por tipo
     const historial = await Transaccion.findAll({
