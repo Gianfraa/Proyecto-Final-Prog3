@@ -49,9 +49,14 @@ jspm_packages/
 
 # TypeScript cache
 *.tsbuildinfo
-*.js
 *.js.map
 *.d.ts
+
+# Archivos JS compilados (excepto fuentes importantes)
+/backend/*.js
+/backend/dist/
+!copy-config.js
+!utils/categoriaHelpers.js
 
 # Optional npm cache directory
 .npm
