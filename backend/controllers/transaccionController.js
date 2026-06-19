@@ -171,7 +171,7 @@ const putTransaccion = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const { descripcion, monto, tipo, fecha, categoriaId } = req.body;
+    const { descripcion, monto, tipo, naturaleza, fecha, categoriaId } = req.body;
 
     const transaccion = await Transaccion.findOne({ where: { id, userId } });
 
@@ -183,6 +183,7 @@ const putTransaccion = async (req, res) => {
       descripcion,
       monto,
       tipo,
+      naturaleza,
       fecha: fecha ? new Date(fecha) : new Date(),
       categoriaId: categoriaId || null
     });
