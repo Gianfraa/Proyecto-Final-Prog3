@@ -5,7 +5,7 @@ const { Transaccion, Categoria } = require('../models');
 
 const getTransacciones = async (req, res) => {
   try {
-    const { categoria, desde, hasta, tipo, q, page = 1, limit = 10 } = req.query;
+    const { categoria, desde, hasta, tipo, naturaleza, q, page = 1, limit = 10 } = req.query;
     const userId = req.user.id;
 
     const where = { userId };
@@ -35,6 +35,18 @@ const getTransacciones = async (req, res) => {
         return res.status(400).json({ error: 'Tipo inválido. Use "ingreso" o "gasto"' });
       }
       where.tipo = tipo.toLowerCase();
+    }
+
+    if (naturaleza) {
+      const naturalezasValidas = ['fijo', 'variable'];
+
+      if (!naturalezasValidas.includes(naturaleza.toLowerCase())) {
+        return res.status(400).json({
+          error: 'Naturaleza inválida. Use "fijo" o "variable"'
+        });
+      }
+
+      where.naturaleza = naturaleza.toLowerCase();
     }
 
     // Busqueda por texto en descripción
@@ -106,7 +118,7 @@ const getHistorial = async (req, res) => {
     // Transformar el resultado en un formato amigable por mes
     const resumen = {};
     for (const fila of historial) {
-      const mes = fila.mes.toISOString().slice(0, 7); 
+      const mes = fila.mes.toISOString().slice(0, 7);
       if (!resumen[mes]) {
         resumen[mes] = { mes, ingresos: 0, gastos: 0, cantidadIngresos: 0, cantidadGastos: 0 };
       }
@@ -134,13 +146,14 @@ const getHistorial = async (req, res) => {
 // POST /api/transacciones
 const postNuevaTransaccion = async (req, res) => {
   try {
-    const { descripcion, monto, tipo, fecha, categoriaId } = req.body;
+    const { descripcion, monto, tipo, naturaleza, fecha, categoriaId } = req.body;
     const userId = req.user.id;
 
     const nueva = await Transaccion.create({
       descripcion,
       monto,
       tipo,
+      naturaleza: naturaleza || 'variable',
       fecha: fecha ? new Date(fecha) : new Date(),
       userId,
       categoriaId: categoriaId || null
@@ -158,7 +171,7 @@ const putTransaccion = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const { descripcion, monto, tipo, fecha, categoriaId } = req.body;
+    const { descripcion, monto, tipo, naturaleza, fecha, categoriaId } = req.body;
 
     const transaccion = await Transaccion.findOne({ where: { id, userId } });
 
@@ -170,6 +183,7 @@ const putTransaccion = async (req, res) => {
       descripcion,
       monto,
       tipo,
+      naturaleza,
       fecha: fecha ? new Date(fecha) : new Date(),
       categoriaId: categoriaId || null
     });
@@ -180,7 +194,7 @@ const putTransaccion = async (req, res) => {
 
     res.json({ data: transaccion });
   } catch (error) {
-      console.error('Error en putTransaccion:', error);
+    console.error('Error en putTransaccion:', error);
     res.status(500).json({ error: 'Error al actualizar transacción' });
   }
 };
