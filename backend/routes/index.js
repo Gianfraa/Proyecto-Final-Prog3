@@ -5,6 +5,7 @@ const authRoutes = require('./auth');
 const transaccionRoutes = require('./transaccionRoutes');
 const categoriaRoutes = require('./categoriaRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
+const simulacionRoutes = require('./simulacionRoutes');
 
 router.get('/health', (req, res) => {
     res.status(200).json({
@@ -20,6 +21,7 @@ router.use('/transacciones', transaccionRoutes);
 router.use('/historial', transaccionRoutes);
 router.use('/categorias', categoriaRoutes);
 router.use('/', dashboardRoutes);
+router.use('/simulaciones', simulacionRoutes);
 
 router.get('/test', (req, res) => {
     res.json({
