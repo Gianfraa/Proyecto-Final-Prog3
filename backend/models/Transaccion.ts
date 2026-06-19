@@ -1,9 +1,11 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 import { InterfaceTransaccion } from './interfaces/transaccion.interface';
+import { User } from './User';
+import { Categoria } from './Categoria';
 
 interface TransaccionCreationAttributes extends Optional<InterfaceTransaccion, 'id' | 'categoriaId' | 'createdAt' | 'updatedAt'> {}
 
-class Transaccion
+export class Transaccion
   extends Model<InterfaceTransaccion, TransaccionCreationAttributes>
   implements InterfaceTransaccion
 {
@@ -17,7 +19,7 @@ class Transaccion
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  static associate(models: any) {
+  static associate(models: { User?: typeof User; Categoria?: typeof Categoria }) {
     if (models.User) {
       Transaccion.belongsTo(models.User,
         {
