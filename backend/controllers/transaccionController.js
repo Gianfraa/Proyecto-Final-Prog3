@@ -1,5 +1,21 @@
 const { Op } = require('sequelize');
 const { Transaccion, Categoria } = require('../dist/models');
+const { redisClient, CACHE_KEYS } = require('../config/redis');
+
+// Función para invalidar caché
+
+const invalidarCacheUsuario = async (userId) => {
+  try {
+    await Promise.all([
+      redisClient.del(CACHE_KEYS.balance(userId)),
+      redisClient.del(CACHE_KEYS.resumen(userId)),
+      redisClient.del(CACHE_KEYS.estadisticas(userId)),
+      redisClient.del(CACHE_KEYS.balanceConsolidado(userId))
+    ]);
+  } catch (error) {
+    console.error('Error al invalidar caché del usuario:', error.message);
+  }
+};
 
 // GET /api/transacciones
 
@@ -159,6 +175,8 @@ const postNuevaTransaccion = async (req, res) => {
       categoriaId: categoriaId || null
     });
 
+    await invalidarCacheUsuario(userId);
+
     res.status(201).json({ data: nueva });
   } catch (error) {
     console.error('Error en postNuevaTransaccion:', error);
@@ -192,6 +210,8 @@ const putTransaccion = async (req, res) => {
       include: [{ model: Categoria, as: 'categoria', attributes: ['id', 'nombre'] }]
     });
 
+    await invalidarCacheUsuario(userId);
+
     res.json({ data: transaccion });
   } catch (error) {
     console.error('Error en putTransaccion:', error);
@@ -212,6 +232,8 @@ const deleteTransaccion = async (req, res) => {
     }
 
     await transaccion.destroy();
+
+    await invalidarCacheUsuario(userId);
 
     res.json({ message: 'Transacción eliminada correctamente' });
   } catch (error) {
