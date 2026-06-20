@@ -3,6 +3,7 @@ export interface InterfaceTransaccion {
   descripcion: string
   monto: number
   tipo: 'ingreso' | 'gasto'
+  naturaleza: 'fijo' | 'variable'
   fecha: Date
   userId: number
   categoriaId?: number | null

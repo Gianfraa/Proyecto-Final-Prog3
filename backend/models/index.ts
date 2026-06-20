@@ -5,6 +5,7 @@ import config from '../config/database';
 import initUser from './User';
 import initCategoria from './Categoria';
 import initTransaccion from './Transaccion';
+import initSimulacion from './Simulacion';
 
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env];
@@ -26,17 +27,20 @@ export const sequelize = new Sequelize(
 export const User = initUser(sequelize);
 export const Categoria = initCategoria(sequelize);
 export const Transaccion = initTransaccion(sequelize);
+export const Simulacion = initSimulacion(sequelize);
 
 type Models = {
   User: typeof User;
   Categoria: typeof Categoria;
   Transaccion: typeof Transaccion;
+  Simulacion: typeof Simulacion;
 };
 
 const models: Models = {
   User,
   Categoria,
   Transaccion,
+  Simulacion,
 };
 
 Object.values(models).forEach((model) => {
