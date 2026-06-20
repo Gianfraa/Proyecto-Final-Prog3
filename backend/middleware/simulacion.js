@@ -14,7 +14,7 @@ const validarSimularCompra = (req, res, next) => {
     return res.status(400).json({ error: 'La cantidad de cuotas debe ser un entero entre 1 y 48' });
   }
 
-  if (tasaInteresMensual !== undefined && tasaInteresMensual !== null || tasaInteresMensual < 0) {
+  if (tasaInteresMensual !== undefined && tasaInteresMensual !== null && tasaInteresMensual < 0) {
     return res.status(400).json({ error: 'La tasa de interés mensual debe ser un número válido mayor a 0' });
   }
 
