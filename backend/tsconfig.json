@@ -8,15 +8,17 @@
     "strict": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "allowJs": true, 
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
   "include": [
-    "models//*.ts",
-    "utils//.ts",
-    "config/**/.ts"
+    "models/**/*.ts",
+    "utils/**/*.ts",
+    "config/**/*.js",
+    "config/**/*.ts"
   ],
   "exclude": [
     "node_modules",
