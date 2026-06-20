@@ -10,4 +10,8 @@ router.use(verificarToken);
 // Simula una compra en cuotas y opcionalmente la guarda
 router.post('/simulador/comprar', postSimularCompra);
 
+// GET /api/balance-consolidado
+// Balance actual + ingresos/gastos fijos + simulaciones activas, proyectado a 6 meses
+router.get('/balance-consolidado', getBalanceConsolidado);
+
 module.exports = router;
