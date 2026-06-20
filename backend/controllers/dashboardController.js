@@ -1,5 +1,5 @@
 // backend/controllers/dashboardController.js
-const { Transaccion, Categoria } = require('../models');
+const { Transaccion, Categoria } = require('../dist/models');
 const { redisClient, CACHE_TTL, CACHE_KEYS } = require('../config/redis');
 
 // GET /api/balance

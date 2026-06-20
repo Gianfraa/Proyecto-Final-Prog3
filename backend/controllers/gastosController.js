@@ -3,25 +3,12 @@ const { Transaccion, Simulacion } = require('../models');
 const { redisClient, CACHE_TTL, CACHE_KEYS } = require('../config/redis');
 
 
- //POST /api/simulador/comprar
- 
+//POST /api/simulador/comprar
+
 const postSimularCompra = async (req, res) => {
   try {
     const { producto, precioTotal, cantidadCuotas, tasaInteresMensual, guardar } = req.body;
     const userId = req.user.id;
-
-    // --- Validaciones básicas ---
-    if (!producto || typeof producto !== 'string' || producto.trim().length === 0) {
-      return res.status(400).json({ error: 'El nombre del producto es obligatorio' });
-    }
-
-    if (!precioTotal || typeof precioTotal !== 'number' || precioTotal <= 0) {
-      return res.status(400).json({ error: 'El precio total debe ser un número mayor a 0' });
-    }
-
-    if (!cantidadCuotas || !Number.isInteger(cantidadCuotas) || cantidadCuotas < 1 || cantidadCuotas > 48) {
-      return res.status(400).json({ error: 'La cantidad de cuotas debe ser un entero entre 1 y 48' });
-    }
 
     const tasa = typeof tasaInteresMensual === 'number' && tasaInteresMensual >= 0 ? tasaInteresMensual : 0;
 
