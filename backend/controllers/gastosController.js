@@ -1,4 +1,6 @@
 const { calcularCuotas } = require('../utils/simuladorHelpers');
+const { Transaccion, Simulacion } = require('../models');
+const { redisClient, CACHE_TTL, CACHE_KEYS } = require('../config/redis');
 
 
  //POST /api/simulador/comprar
@@ -66,5 +68,19 @@ const postSimularCompra = async (req, res) => {
     return res.status(500).json({ error: 'Error al simular la compra' });
   }
 };
+
+// Helpers para el balance consolidado (sanger)
+// Cuenta cuántos meses calendario (año+mes) pasaron entre dos fechas.
+// Se usa para saber cuántas cuotas de una simulación ya "vencieron".
+function mesesTranscurridos(desde, hasta) {
+  const d = new Date(desde);
+  const h = new Date(hasta);
+  return (h.getFullYear() - d.getFullYear()) * 12 + (h.getMonth() - d.getMonth());
+}
+
+function redondear(valor) {
+  return Math.round((valor + Number.EPSILON) * 100) / 100;
+}
+
 
 module.exports = { postSimularCompra };
