@@ -1,5 +1,7 @@
-const { op } = require('sequelize');
-const { Simulacion } = require('../models');
+const { Op } = require('sequelize');
+const { Simulacion } = require('../dist/models');
+const { redisClient, CACHE_KEYS } = require('../config/redis');
+const { calcularCuotas } = require('../utils/simuladorHelpers');
 
 // GET /api/simulaciones
 const getSimulaciones = async (req, res) => {
@@ -21,12 +23,16 @@ const postSimulacion = async (req, res) => {
   try {
     const userId = req.user.id;
     const { producto, precioTotal, cantidadCuotas, tasaInteresMensual } = req.body;
+    const tasa = typeof tasaInteresMensual === 'number' && tasaInteresMensual >= 0 ? tasaInteresMensual : 0;
+    const resultado = calcularCuotas(precioTotal, cantidadCuotas, tasa);
     const simulacion = await Simulacion.create({
       userId,
       producto,
       precioTotal,
       cantidadCuotas,
-      tasaInteresMensual
+      tasaInteresMensual: tasa,
+      valorCuota: resultado.valorCuota,
+      totalFinanciado: resultado.totalFinanciado,
     });
 
     try {
