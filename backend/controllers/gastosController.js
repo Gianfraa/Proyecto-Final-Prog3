@@ -1,5 +1,5 @@
 const { calcularCuotas } = require('../utils/simuladorHelpers');
-const { Transaccion, Simulacion } = require('../models');
+const { Transaccion, Simulacion } = require('../dist/models');
 const { redisClient, CACHE_TTL, CACHE_KEYS } = require('../config/redis');
 
 
@@ -28,7 +28,7 @@ const postSimularCompra = async (req, res) => {
 
     if (guardar) {
       try {
-        const { Simulacion } = require('../models');
+        const { Simulacion } = require('../dist/models');
         if (Simulacion) {
           const simulacion = await Simulacion.create({
             userId,
