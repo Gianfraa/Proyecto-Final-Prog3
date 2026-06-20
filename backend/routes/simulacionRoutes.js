@@ -10,7 +10,7 @@ router.use(verificarToken);
 router.get('/', getSimulaciones);
 
 // POST /api/simulaciones - Crear una nueva simulacion
-router.post('/', postSimulacion, validarSimularCompra);
+router.post('/', validarSimularCompra, postSimulacion);
 
 // DELETE /api/simulaciones/:id - Eliminar una simulacion por id
 router.delete('/:id', deleteSimulacion);
