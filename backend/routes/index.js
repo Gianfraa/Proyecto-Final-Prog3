@@ -1,4 +1,3 @@
-// backend/routes/index.js
 const express = require('express');
 const router = express.Router();
 const authRoutes = require('./auth');
@@ -6,6 +5,7 @@ const transaccionRoutes = require('./transaccionRoutes');
 const categoriaRoutes = require('./categoriaRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const simulacionRoutes = require('./simulacionRoutes');
+const gastosRoutes = require('./gastosRoutes');
 
 router.get('/health', (req, res) => {
     res.status(200).json({
@@ -22,6 +22,7 @@ router.use('/historial', transaccionRoutes);
 router.use('/categorias', categoriaRoutes);
 router.use('/', dashboardRoutes);
 router.use('/simulaciones', simulacionRoutes);
+router.use('/', gastosRoutes);
 
 router.get('/test', (req, res) => {
     res.json({
