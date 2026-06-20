@@ -28,6 +28,13 @@ const postSimulacion = async (req, res) => {
       cantidadCuotas,
       tasaInteresMensual
     });
+
+    try {
+      await redisClient.del(CACHE_KEYS.balanceConsolidado(userId));
+    } catch (err) {
+      console.error('Error invalidando cache de balance consolidado:', err.message);
+    }
+
     res.status(201).json({ simulacion });
   } catch (error) {
     console.error('Error en postSimulacion:', error);
@@ -47,6 +54,13 @@ const deleteSimulacion = async (req, res) => {
       return res.status(404).json({ error: 'Simulacion no encontrada' });
     }
     await simulacion.destroy();
+
+    try {
+      await redisClient.del(CACHE_KEYS.balanceConsolidado(userId));
+    } catch (err) {
+      console.error('Error invalidando cache de balance consolidado:', err.message);
+    }
+
     res.json({ message: 'Simulacion eliminada correctamente' });
   } catch (error) {
     console.error('Error en deleteSimulacion:', error);
