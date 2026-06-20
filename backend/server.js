@@ -68,15 +68,15 @@ async function startServer() {
     }
     
     app.listen(PORT, () => {
-      console.log("🚀 Server is running on port ${PORT}");
-      console.log("📝 Environment: ${process.env.NODE_ENV || 'development'}");
-      console.log("🔗 API available at: http://localhost:${PORT}/api");
+      console.log(`🚀 Server is running on port ${PORT}`);
+      console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔗 API available at: http://localhost:${PORT}/api`);
     });
   } catch (error) {
     console.error('❌ Unable to start server:', error);
     // Continuar sin base de datos para desarrollo
     app.listen(PORT, () => {
-      console.log("⚠️  Server started without database on port ${PORT}");
+      console.log(`⚠️  Server started without database on port ${PORT}`);
     });
   }
 }
