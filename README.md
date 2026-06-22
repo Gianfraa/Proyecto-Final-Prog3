@@ -48,7 +48,7 @@ Aplicación web full-stack para registrar y analizar ingresos y gastos personale
 
 Se agregó un módulo nuevo de análisis financiero (gastos fijos/variables, simulador de compras y balance consolidado). El trabajo se dividió en 5 tracks y se desarrolló en orden secuencial sobre la rama `AppV1.1`:
 
-```markdown
+
 | Orden | Integrante | Responsabilidad |
 |-------|------------|-----------------|
 | 1 | **Nicolas Castellini** | Modelo `Transaccion` + campo `naturaleza` (fijo/variable) |
@@ -56,8 +56,8 @@ Se agregó un módulo nuevo de análisis financiero (gastos fijos/variables, sim
 | 3 | **Nazareno Negrete** | Lógica del simulador (cálculo de cuotas) |
 | 4 | **Alejo Sanger** | Balance consolidado (proyección mensual) |
 | 5 | **Julian Peralta** | Caché, validaciones, tests e integración |
-| — | **Gianfranco Tarulli** | Actualización del README con el nuevo módulo |
-```
+| 6 | **Gianfranco Tarulli** | Actualización del README con el nuevo módulo |
+
 
 
 ---
