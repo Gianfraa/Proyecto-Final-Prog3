@@ -1,7 +1,3 @@
-
-
-
-
 function calcularCuotas(precioTotal, cantidadCuotas, tasaInteresMensual, fechaInicio) {
   const n = Math.max(1, Math.floor(cantidadCuotas));
   const i = Math.max(0, tasaInteresMensual || 0) / 100;

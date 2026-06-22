@@ -3,7 +3,6 @@ const { Transaccion, Categoria } = require('../dist/models');
 const { redisClient, CACHE_KEYS } = require('../config/redis');
 
 // Función para invalidar caché
-
 const invalidarCacheUsuario = async (userId) => {
   try {
     await Promise.all([
@@ -18,7 +17,6 @@ const invalidarCacheUsuario = async (userId) => {
 };
 
 // GET /api/transacciones
-
 const getTransacciones = async (req, res) => {
   try {
     const { categoria, desde, hasta, tipo, naturaleza, q, page = 1, limit = 10 } = req.query;
@@ -26,12 +24,10 @@ const getTransacciones = async (req, res) => {
 
     const where = { userId };
 
-    // Filtro por categoría
     if (categoria) {
       where.categoriaId = parseInt(categoria, 10);
     }
 
-    // Filtro por rango de fechas
     if (desde || hasta) {
       where.fecha = {};
       if (desde) {
@@ -44,7 +40,6 @@ const getTransacciones = async (req, res) => {
       }
     }
 
-    // Filtro por tipo (ingreso / gasto)
     if (tipo) {
       const tiposValidos = ['ingreso', 'gasto'];
       if (!tiposValidos.includes(tipo.toLowerCase())) {
@@ -65,12 +60,10 @@ const getTransacciones = async (req, res) => {
       where.naturaleza = naturaleza.toLowerCase();
     }
 
-    // Busqueda por texto en descripción
     if (q) {
       where.descripcion = { [Op.iLike]: `%${q}%` };
     }
 
-    // Paginación
     const pageNum = Math.max(1, parseInt(page, 10));
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10)));
     const offset = (pageNum - 1) * limitNum;
@@ -112,7 +105,6 @@ const getHistorial = async (req, res) => {
     const userId = req.user.id;
     const { sequelize } = require('../dist/models');
 
-    // Agrupar por año y mes, calcular totales por tipo
     const historial = await Transaccion.findAll({
       where: { userId },
       attributes: [
@@ -131,7 +123,6 @@ const getHistorial = async (req, res) => {
       raw: true
     });
 
-    // Transformar el resultado en un formato amigable por mes
     const resumen = {};
     for (const fila of historial) {
       const mes = fila.mes.toISOString().slice(0, 7);

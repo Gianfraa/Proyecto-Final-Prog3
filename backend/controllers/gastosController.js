@@ -4,7 +4,6 @@ const { redisClient, CACHE_TTL, CACHE_KEYS } = require('../config/redis');
 
 
 //POST /api/simulador/comprar
-
 const postSimularCompra = async (req, res) => {
   try {
     const { producto, precioTotal, cantidadCuotas, tasaInteresMensual, guardar } = req.body;
@@ -12,7 +11,6 @@ const postSimularCompra = async (req, res) => {
 
     const tasa = typeof tasaInteresMensual === 'number' && tasaInteresMensual >= 0 ? tasaInteresMensual : 0;
 
-    // --- Calcular cuotas ---
     const resultado = calcularCuotas(precioTotal, cantidadCuotas, tasa);
 
     const data = {
@@ -56,10 +54,6 @@ const postSimularCompra = async (req, res) => {
   }
 };
 
-// --------------------------------------------
-// Helpers para el balance consolidado (sanger)
-// Cuenta cuántos meses calendario (año+mes) pasaron entre dos fechas.
-// Se usa para saber cuántas cuotas de una simulación ya "vencieron".
 function mesesTranscurridos(desde, hasta) {
   const d = new Date(desde);
   const h = new Date(hasta);
@@ -70,10 +64,6 @@ function redondear(valor) {
   return Math.round((valor + Number.EPSILON) * 100) / 100;
 }
 
-
-// --------------------------------------------
-// GET /api/balance-consolidado (sanger)
-// Integra transacciones reales + simulaciones activas en una proyección a 6 meses.
 const getBalanceConsolidado = async (req, res) => {
   const userId = req.user.id;
   const cacheKey = CACHE_KEYS.balanceConsolidado(userId);
@@ -94,7 +84,6 @@ const getBalanceConsolidado = async (req, res) => {
 
     const transacciones = await Transaccion.findAll({ where: { userId } });
 
-    // a) balanceActual: misma lógica que dashboardController.getBalance
     const totalIngresos = transacciones
       .filter((t) => t.tipo === 'ingreso')
       .reduce((sum, t) => sum + parseFloat(t.monto), 0);
@@ -103,7 +92,6 @@ const getBalanceConsolidado = async (req, res) => {
       .reduce((sum, t) => sum + parseFloat(t.monto), 0);
     const balanceActual = redondear(totalIngresos - totalGastos);
 
-    // b) y c) ingresos/gastos fijos
     const ingresosFijosMensuales = redondear(
       transacciones
         .filter((t) => t.tipo === 'ingreso' && t.naturaleza === 'fijo')
@@ -115,7 +103,6 @@ const getBalanceConsolidado = async (req, res) => {
         .reduce((sum, t) => sum + parseFloat(t.monto), 0)
     );
 
-    // Gastos variables: sólo el mes en curso (no son recurrentes)
     const gastosVariablesMesActual = redondear(
       transacciones
         .filter((t) => {
@@ -130,7 +117,6 @@ const getBalanceConsolidado = async (req, res) => {
         .reduce((sum, t) => sum + parseFloat(t.monto), 0)
     );
 
-    // d) Simulaciones activas
     const simulaciones = await Simulacion.findAll({ where: { userId, activa: true } });
 
     const simulacionesConProgreso = simulaciones.map((s) => {
@@ -150,7 +136,6 @@ const getBalanceConsolidado = async (req, res) => {
       };
     });
 
-    // e) Proyección a 6 meses: ingresosFijos - gastosFijos - cuotasSimuladas
     const proyeccionMensual = [];
     let balanceNetoProyectado = 0;
 
@@ -195,7 +180,6 @@ const getBalanceConsolidado = async (req, res) => {
       balanceNetoProyectado,
     };
 
-    // 4.4: cachear por 5 minutos
     try {
       await redisClient.setEx(cacheKey, CACHE_TTL.BALANCE_CONSOLIDADO, JSON.stringify(data));
     } catch (err) {
