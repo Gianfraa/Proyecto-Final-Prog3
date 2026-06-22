@@ -21,6 +21,9 @@ RUN npm install -g nodemon
 # Copiar código fuente
 COPY . .
 
+# Compilar los modelos TypeScript a dist/
+RUN npx tsc
+
 # Exponer puertos (app y debugging)
 EXPOSE 3001 9229
 

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "types": ["node"],
     "target": "ES2020",
     "module": "commonjs",
     "outDir": "./dist",
@@ -7,6 +8,7 @@
     "strict": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "allowJs": true, 
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
@@ -14,7 +16,9 @@
   },
   "include": [
     "models/**/*.ts",
-    "utils/**/*.ts"
+    "utils/**/*.ts",
+    "config/**/*.js",
+    "config/**/*.ts"
   ],
   "exclude": [
     "node_modules",

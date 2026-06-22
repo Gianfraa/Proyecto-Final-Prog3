@@ -1,21 +1,33 @@
 const { Op } = require('sequelize');
-const { Transaccion, Categoria } = require('../models');
+const { Transaccion, Categoria } = require('../dist/models');
+const { redisClient, CACHE_KEYS } = require('../config/redis');
+
+// Función para invalidar caché
+const invalidarCacheUsuario = async (userId) => {
+  try {
+    await Promise.all([
+      redisClient.del(CACHE_KEYS.balance(userId)),
+      redisClient.del(CACHE_KEYS.resumen(userId)),
+      redisClient.del(CACHE_KEYS.estadisticas(userId)),
+      redisClient.del(CACHE_KEYS.balanceConsolidado(userId))
+    ]);
+  } catch (error) {
+    console.error('Error al invalidar caché del usuario:', error.message);
+  }
+};
 
 // GET /api/transacciones
-
 const getTransacciones = async (req, res) => {
   try {
-    const { categoria, desde, hasta, tipo, q, page = 1, limit = 10 } = req.query;
+    const { categoria, desde, hasta, tipo, naturaleza, q, page = 1, limit = 10 } = req.query;
     const userId = req.user.id;
 
     const where = { userId };
 
-    // Filtro por categoría
     if (categoria) {
       where.categoriaId = parseInt(categoria, 10);
     }
 
-    // Filtro por rango de fechas
     if (desde || hasta) {
       where.fecha = {};
       if (desde) {
@@ -28,7 +40,6 @@ const getTransacciones = async (req, res) => {
       }
     }
 
-    // Filtro por tipo (ingreso / gasto)
     if (tipo) {
       const tiposValidos = ['ingreso', 'gasto'];
       if (!tiposValidos.includes(tipo.toLowerCase())) {
@@ -37,12 +48,22 @@ const getTransacciones = async (req, res) => {
       where.tipo = tipo.toLowerCase();
     }
 
-    // Busqueda por texto en descripción
+    if (naturaleza) {
+      const naturalezasValidas = ['fijo', 'variable'];
+
+      if (!naturalezasValidas.includes(naturaleza.toLowerCase())) {
+        return res.status(400).json({
+          error: 'Naturaleza inválida. Use "fijo" o "variable"'
+        });
+      }
+
+      where.naturaleza = naturaleza.toLowerCase();
+    }
+
     if (q) {
       where.descripcion = { [Op.iLike]: `%${q}%` };
     }
 
-    // Paginación
     const pageNum = Math.max(1, parseInt(page, 10));
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10)));
     const offset = (pageNum - 1) * limitNum;
@@ -82,9 +103,8 @@ const getTransacciones = async (req, res) => {
 const getHistorial = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { sequelize } = require('../models');
+    const { sequelize } = require('../dist/models');
 
-    // Agrupar por año y mes, calcular totales por tipo
     const historial = await Transaccion.findAll({
       where: { userId },
       attributes: [
@@ -103,10 +123,9 @@ const getHistorial = async (req, res) => {
       raw: true
     });
 
-    // Transformar el resultado en un formato amigable por mes
     const resumen = {};
     for (const fila of historial) {
-      const mes = fila.mes.toISOString().slice(0, 7); 
+      const mes = fila.mes.toISOString().slice(0, 7);
       if (!resumen[mes]) {
         resumen[mes] = { mes, ingresos: 0, gastos: 0, cantidadIngresos: 0, cantidadGastos: 0 };
       }
@@ -134,17 +153,20 @@ const getHistorial = async (req, res) => {
 // POST /api/transacciones
 const postNuevaTransaccion = async (req, res) => {
   try {
-    const { descripcion, monto, tipo, fecha, categoriaId } = req.body;
+    const { descripcion, monto, tipo, naturaleza, fecha, categoriaId } = req.body;
     const userId = req.user.id;
 
     const nueva = await Transaccion.create({
       descripcion,
       monto,
       tipo,
+      naturaleza: naturaleza || 'variable',
       fecha: fecha ? new Date(fecha) : new Date(),
       userId,
       categoriaId: categoriaId || null
     });
+
+    await invalidarCacheUsuario(userId);
 
     res.status(201).json({ data: nueva });
   } catch (error) {
@@ -158,7 +180,7 @@ const putTransaccion = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const { descripcion, monto, tipo, fecha, categoriaId } = req.body;
+    const { descripcion, monto, tipo, naturaleza, fecha, categoriaId } = req.body;
 
     const transaccion = await Transaccion.findOne({ where: { id, userId } });
 
@@ -170,6 +192,7 @@ const putTransaccion = async (req, res) => {
       descripcion,
       monto,
       tipo,
+      naturaleza,
       fecha: fecha ? new Date(fecha) : new Date(),
       categoriaId: categoriaId || null
     });
@@ -178,9 +201,11 @@ const putTransaccion = async (req, res) => {
       include: [{ model: Categoria, as: 'categoria', attributes: ['id', 'nombre'] }]
     });
 
+    await invalidarCacheUsuario(userId);
+
     res.json({ data: transaccion });
   } catch (error) {
-      console.error('Error en putTransaccion:', error);
+    console.error('Error en putTransaccion:', error);
     res.status(500).json({ error: 'Error al actualizar transacción' });
   }
 };
@@ -198,6 +223,8 @@ const deleteTransaccion = async (req, res) => {
     }
 
     await transaccion.destroy();
+
+    await invalidarCacheUsuario(userId);
 
     res.json({ message: 'Transacción eliminada correctamente' });
   } catch (error) {

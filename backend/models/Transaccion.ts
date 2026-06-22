@@ -1,28 +1,30 @@
 import { DataTypes, Model, Optional, Sequelize } from 'sequelize';
 import { InterfaceTransaccion } from './interfaces/transaccion.interface';
+import { User } from './User';
+import { Categoria } from './Categoria';
 
-interface TransaccionCreationAttributes extends Optional<InterfaceTransaccion, 'id' | 'categoriaId' | 'createdAt' | 'updatedAt'> {}
+interface TransaccionCreationAttributes extends Optional<InterfaceTransaccion, 'id' | 'categoriaId' | 'createdAt' | 'updatedAt'> { }
 
-class Transaccion
+export class Transaccion
   extends Model<InterfaceTransaccion, TransaccionCreationAttributes>
-  implements InterfaceTransaccion
-{
+  implements InterfaceTransaccion {
   public id!: number;
   public descripcion!: string;
   public monto!: number;
   public tipo!: 'ingreso' | 'gasto';
+  public naturaleza!: 'fijo' | 'variable';
   public fecha!: Date;
   public userId!: number;
   public categoriaId!: number | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  static associate(models: any) {
+  static associate(models: { User?: typeof User; Categoria?: typeof Categoria }) {
     if (models.User) {
       Transaccion.belongsTo(models.User,
         {
-        foreignKey: 'userId',
-        as: 'usuario',
+          foreignKey: 'userId',
+          as: 'usuario',
         }
       );
     }
@@ -30,8 +32,8 @@ class Transaccion
     if (models.Categoria) {
       Transaccion.belongsTo(models.Categoria,
         {
-        foreignKey: 'categoriaId',
-        as: 'categoria',
+          foreignKey: 'categoriaId',
+          as: 'categoria',
         }
       );
     }
@@ -69,6 +71,18 @@ export default function initTransaccion(sequelize: Sequelize): typeof Transaccio
           isIn: {
             args: [['ingreso', 'gasto']],
             msg: 'El tipo debe ser ingreso o gasto',
+          },
+        },
+      },
+      naturaleza: {
+        type: DataTypes.ENUM('fijo', 'variable'),
+        allowNull: false,
+        defaultValue: 'variable',
+        validate: {
+          notNull: { msg: 'La naturaleza es obligatoria' },
+          isIn: {
+            args: [['fijo', 'variable']],
+            msg: 'La naturaleza debe ser fijo o variable',
           },
         },
       },

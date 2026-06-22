@@ -43,14 +43,16 @@ redisClient.on('reconnecting', () => {
 const CACHE_TTL = {
     BALANCE: 300,
     RESUMEN: 300,
-    ESTADISTICAS: 300
+    ESTADISTICAS: 300,
+    BALANCE_CONSOLIDADO: 300 // nueva línea (sanger)
 };
 
 // Claves de caché por usuario
 const CACHE_KEYS = {
     balance: (userId) => `balance:user:${userId}`,
     resumen: (userId) => `resumen:user:${userId}`,
-    estadisticas: (userId) => `estadisticas:user:${userId}`
+    estadisticas: (userId) => `estadisticas:user:${userId}`,
+    balanceConsolidado: (userId) => `balance-consolidado:user:${userId}` // nueva línea (sanger)
 };
 
 module.exports = { redisClient, CACHE_TTL, CACHE_KEYS };
