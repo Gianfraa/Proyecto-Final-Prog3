@@ -1,10 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import Navbar from './components/layout/Navbar';
 import Sidebar from './components/layout/Sidebar';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Transacciones from './pages/Transacciones';
+import Categorias from './pages/Categorias';
 
 // Placeholder para que las otras personas puedan conectar sus páginas
 const Placeholder = ({ nombre }) => (
@@ -71,8 +74,8 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes>
-        </AppRoutes>
+        <Toaster position="top-right" />
+        <AppRoutes />
       </AuthProvider>
     </BrowserRouter>
   );
