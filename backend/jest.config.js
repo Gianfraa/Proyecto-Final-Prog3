@@ -11,8 +11,9 @@ module.exports = {
     '!**/node_modules/**',
     '!**/dist/**'
   ],
-  // Silenciar logs de consola durante los tests
+  // Desactivar logs en tests
   silent: false,
-  // Tiempo máximo por test (ms)
+  // Tiempo máximo (ms)
   testTimeout: 10000
 };
+
