@@ -8,6 +8,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Transacciones from './pages/Transacciones';
 import Categorias from './pages/Categorias';
+import Simulador from './pages/Simulador';
+import BalanceConsolidado from './pages/BalanceConsolidado';
 
 // Placeholder para que las otras personas puedan conectar sus páginas
 const Placeholder = ({ nombre }) => (
@@ -58,8 +60,8 @@ function AppRoutes() {
           <Route path="/dashboard" element={<Placeholder nombre="Dashboard" />} />
           <Route path="/transacciones" element={<Placeholder nombre="Transacciones" />} />
           <Route path="/categorias" element={<Placeholder nombre="Categorías" />} />
-          <Route path="/simulador" element={<Placeholder nombre="Simulador" />} />
-          <Route path="/balance" element={<Placeholder nombre="Balance Consolidado" />} />
+          <Route path="/simulador" element={<Simulador />} />
+          <Route path="/balance" element={<BalanceConsolidado />} />
         </Route>
       </Route>
 
