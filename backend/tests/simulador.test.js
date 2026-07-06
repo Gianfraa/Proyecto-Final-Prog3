@@ -130,7 +130,6 @@ describe('HELPER — calcularCuotas (casos límite)', () => {
     const resultado = calcularCuotas(1000, 3, 1.5);
 
     resultado.cuotas.forEach((cuota) => {
-      // Verificar que tiene máximo 2 decimales
       const partes = cuota.valorCuota.toString().split('.');
       if (partes[1]) {
         expect(partes[1].length).toBeLessThanOrEqual(2);

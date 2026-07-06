@@ -135,8 +135,7 @@ describe('MIDDLEWARE — validateTransaccion', () => {
     );
   });
 
-  test('acumula múltiples errores de validación', () => {
-    // Sin descripción ni tipo válido
+  test('acumula múltiples errores de validación', () => {    
     const { req, res, next } = crearReqRes({ monto: 100 });
     validateTransaccion(req, res, next);
 
