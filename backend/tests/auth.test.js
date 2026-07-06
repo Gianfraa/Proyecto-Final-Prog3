@@ -145,7 +145,7 @@ describe('AUTH — perfil', () => {
 });
 
 describe('MIDDLEWARE — verificarToken (real, sin mock)', () => {
-  const JWT_SECRET = 'secret_por_defecto';
+  const JWT_SECRET = 'jwt_secret_gastos_2024';
   let verificarTokenReal;
 
   beforeAll(() => {
