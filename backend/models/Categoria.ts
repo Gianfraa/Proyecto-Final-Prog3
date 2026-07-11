@@ -16,7 +16,7 @@ export class Categoria
   static associate(models: { Categoria?: typeof Categoria; Transaccion?: typeof Transaccion;}) {
     if (models.Transaccion) {
       Categoria.hasMany(models.Transaccion, {
-        foreignKey: 'categoria_id',
+        foreignKey: 'categoriaId',
         as: 'transacciones',
       });
     }

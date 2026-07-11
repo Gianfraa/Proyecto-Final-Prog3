@@ -24,7 +24,8 @@ export class Simulacion
         Simulacion.belongsTo(
             models.User,
             {
-            foreignKey: 'userId'
+              foreignKey: 'userId',
+              onDelete: 'CASCADE',
             }
         );
       }

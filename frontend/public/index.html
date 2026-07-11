@@ -233,7 +233,7 @@
 
   <!-- Service Worker para PWA (opcional) -->
   <script>
-    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+    if ('serviceWorker' in navigator && '%NODE_ENV%' === 'production') {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('%PUBLIC_URL%/sw.js')
           .then((registration) => {

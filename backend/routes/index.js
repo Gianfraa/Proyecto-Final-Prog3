@@ -18,9 +18,8 @@ router.get('/health', (req, res) => {
 
 router.use('/auth', authRoutes);
 router.use('/transacciones', transaccionRoutes);
-router.use('/historial', transaccionRoutes);
 router.use('/categorias', categoriaRoutes);
-router.use('/', dashboardRoutes);
+router.use('/dashboard', dashboardRoutes);
 router.use('/simulaciones', simulacionRoutes);
 router.use('/', gastosRoutes);
 

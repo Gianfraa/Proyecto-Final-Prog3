@@ -1,20 +1,76 @@
 import React from 'react';
-import './App.css';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider, useAuth } from './hooks/useAuth';
+import Navbar from './components/layout/Navbar';
+import Sidebar from './components/layout/Sidebar';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Transacciones from './pages/Transacciones';
+import Categorias from './pages/Categorias';
+import Simulador from './pages/Simulador';
+import BalanceConsolidado from './pages/BalanceConsolidado';
+
+function AppLayout() {
+    return (
+        <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <div className="flex flex-1">
+                <Sidebar />
+                <main className="flex-1 p-6 bg-gray-50 overflow-auto">
+                    <Outlet />
+                </main>
+            </div>
+        </div>
+    );
+}
+
+function PrivateRoute() {
+    const { isAuthenticated, loading } = useAuth();
+    if (loading) return <div className="flex items-center justify-center min-h-screen text-gray-400">Cargando...</div>;
+    return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+}
+
+function PublicRoute() {
+    const { isAuthenticated, loading } = useAuth();
+    if (loading) return null;
+    return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Outlet />;
+}
+
+function AppRoutes() {
+    return (
+        <Routes>
+            <Route element={<PublicRoute />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+            </Route>
+
+            <Route element={<PrivateRoute />}>
+                <Route element={<AppLayout />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/transacciones" element={<Transacciones />} />
+                    <Route path="/categorias" element={<Categorias />} />
+                    <Route path="/simulador" element={<Simulador />} />
+                    <Route path="/balance" element={<BalanceConsolidado />} />
+                </Route>
+            </Route>
+
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+    );
+}
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>¡Bienvenido a tu nueva aplicación!</h1>
-        <p>Frontend React funcionando correctamente</p>
-        <p>
-          <a href="/api/health" target="_blank" rel="noopener noreferrer">
-            Verificar estado de la API
-          </a>
-        </p>
-      </header>
-    </div>
-  );
+    return (
+        <BrowserRouter>
+            <AuthProvider>
+                <Toaster position="top-right" />
+                <AppRoutes />
+            </AuthProvider>
+        </BrowserRouter>
+    );
 }
 
 export default App;
