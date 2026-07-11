@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getBalance, getResumen } from '../services/dashboard';
-import Estadisticas from './Estadisticas';
+import { getBalance, getResumen } from '../services/dashboardService';
+import Stats from '../components/ui/Stats';
 
 const fmt = (n) =>
   new Intl.NumberFormat('es-AR', {
