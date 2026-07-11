@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getEstadisticas } from '../services/dashboard';
+import { getEstadisticas } from '../services/dashboardService';
 
 const fmt = (n) =>
   new Intl.NumberFormat('es-AR', {
