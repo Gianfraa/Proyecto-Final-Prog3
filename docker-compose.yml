@@ -54,7 +54,7 @@ services:
       database:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
     networks:
       - gastos_network
 
@@ -66,13 +66,13 @@ services:
     container_name: gastos_frontend
     restart: unless-stopped
     environment:
-      - REACT_APP_API_URL=http://localhost:3001/api
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
-      - FAST_REFRESH=true
-      - WDS_SOCKET_HOST=localhost
-      - WDS_SOCKET_PORT=3000
-      - WDS_SOCKET_PATH=/ws
+      REACT_APP_API_URL: http://localhost:3001/api
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      FAST_REFRESH: "true"
+      WDS_SOCKET_HOST: localhost
+      WDS_SOCKET_PORT: "3000"
+      WDS_SOCKET_PATH: /ws
     ports:
       - "3000:3000"
     volumes:
