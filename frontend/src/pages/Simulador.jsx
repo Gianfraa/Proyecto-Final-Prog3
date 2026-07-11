@@ -30,7 +30,8 @@ export default function Simulador() {
 
   useEffect(() => {
     cargarSimulaciones();
-  }, [cargarSimulaciones]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleResultado = (data) => {
     setResultado(data);
