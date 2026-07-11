@@ -22,7 +22,7 @@ Aplicación web full-stack para registrar y analizar ingresos y gastos personale
 
 | Servicio | Tecnología | Puerto | Función |
 |----------|------------|--------|---------|
-| **Frontend** | React 18 | 3000 | Interfaz de usuario |
+| **Frontend** | React 18 + Tailwind CSS | 3000 | Interfaz de usuario |
 | **Backend** | Express + Sequelize | 3001 | API REST |
 | **Database** | PostgreSQL 15 | 5432 | Base de datos relacional |
 | **Cache** | Redis 7 | 6379 | Caché del dashboard y balance consolidado |
@@ -33,7 +33,7 @@ Aplicación web full-stack para registrar y analizar ingresos y gastos personale
 
 ## Equipo
 
-### Entrega original
+### Entrega original (rama `dev`)
 
 | Integrante | Rama | Módulo |
 |------------|------|--------|
@@ -44,21 +44,45 @@ Aplicación web full-stack para registrar y analizar ingresos y gastos personale
 | **Julian Peralta** | `alumo3_peralta` | Transacciones |
 | **Roman Strizzi** | `alumno5_strizzi` | Transacciones |
 
-### Ampliación — Funciones Financieras (rama `AppV1.1`)
+### Ampliación — Funciones Financieras + Frontend (rama `AppV1.1`)
 
-Se agregó un módulo nuevo de análisis financiero (gastos fijos/variables, simulador de compras y balance consolidado). El trabajo se dividió en 5 tracks y se desarrolló en orden secuencial sobre la rama `AppV1.1`:
+El trabajo se dividió en dos etapas sobre la rama `AppV1.1`.
 
+**Etapa 1 — Funciones financieras del backend** (commits secuenciales):
 
 | Orden | Integrante | Responsabilidad |
 |-------|------------|-----------------|
 | 1 | **Nicolas Castellini** | Modelo `Transaccion` + campo `naturaleza` (fijo/variable) |
 | 2 | **Roman Strizzi** | Modelo `Simulacion` + CRUD de simulaciones |
-| 3 | **Nazareno Negrete** | Lógica del simulador (cálculo de cuotas) |
-| 4 | **Alejo Sanger** | Balance consolidado (proyección mensual) |
-| 5 | **Julian Peralta** | Caché, validaciones, tests e integración |
-| 6 | **Gianfranco Tarulli** | Actualización del README con el nuevo módulo |
+| 3 | **Nazareno Negrete** | Lógica del simulador (cálculo de cuotas, amortización francesa) |
+| 4 | **Alejo Sanger** | Balance consolidado (proyección mensual a 6 meses) |
+| 5 | **Julian Peralta** | Caché Redis, validaciones, tests e integración |
+| — | **Gianfranco Tarulli** | Documentación técnica |
 
+**Etapa 2 — Frontend en React + Tests** (ramas personales → `AppV1.1`):
 
+| Integrante | Responsabilidad |
+|------------|-----------------|
+| **Alejo Sanger** | Setup React + Auth (Login/Register) + Layout (Navbar, Sidebar) |
+| **Julian Peralta** | Dashboard (Balance, Resumen, Estadísticas) |
+| **Roman Strizzi** | Transacciones + Categorías (CRUD completo) |
+| **Nazareno Negrete** | Simulador de compras + Balance consolidado (frontend) |
+| **Nicolas Castellini** | Tests del backend (Jest + Supertest) |
+| **Gianfranco Tarulli** | Tests del frontend (React Testing Library) + Integración final |
+
+---
+
+## Pantallas del Frontend
+
+| Pantalla | Ruta | Descripción |
+|----------|------|-------------|
+| Login | `/login` | Inicio de sesión con email y contraseña |
+| Register | `/register` | Registro de nuevo usuario |
+| Dashboard | `/dashboard` | Balance general, resumen mensual y gastos por categoría |
+| Transacciones | `/transacciones` | CRUD de transacciones con filtros e historial mensual |
+| Categorías | `/categorias` | CRUD de categorías |
+| Simulador | `/simulador` | Simulador de compras en cuotas con tabla de amortización |
+| Balance consolidado | `/balance` | Balance actual + proyección mensual a 6 meses |
 
 ---
 
@@ -109,26 +133,61 @@ Proyecto-Final-Prog3/
 │   │   ├── categoriaRoutes.js
 │   │   ├── transaccionRoutes.js
 │   │   ├── dashboardRoutes.js
-│   │   ├── simulacionRoutes.js   # /api/simulaciones
-│   │   └── gastosRoutes.js       # /api/simulador/comprar y /api/balance-consolidado
+│   │   ├── simulacionRoutes.js
+│   │   └── gastosRoutes.js
 │   ├── utils/
 │   │   ├── categoriaHelpers.ts / .js
 │   │   └── simuladorHelpers.js   # calcularCuotas() - amortizacion francesa
 │   ├── migrations/
 │   ├── seeders/
 │   └── tests/
+│       ├── auth.test.js
+│       ├── categorias.test.js
+│       ├── transacciones.test.js
+│       ├── dashboard.test.js
+│       ├── middleware.test.js
+│       └── simulador.test.js
 │
 ├── frontend/
 │   ├── Dockerfile / Dockerfile.dev
 │   ├── package.json
+│   ├── tailwind.config.js
 │   └── src/
 │       ├── App.js
-│       ├── components/
-│       ├── pages/
-│       ├── services/
 │       ├── hooks/
-│       ├── utils/
-│       └── styles/
+│       │   └── useAuth.js            # Contexto de autenticación
+│       ├── services/
+│       │   ├── api.js                # Cliente Axios con interceptor JWT
+│       │   ├── authService.js
+│       │   ├── categoriaService.js
+│       │   ├── transaccionService.js
+│       │   ├── dashboardService.js
+│       │   ├── simulacionService.js
+│       │   └── gastosService.js
+│       ├── components/
+│       │   ├── layout/
+│       │   │   ├── Navbar.jsx
+│       │   │   └── Sidebar.jsx
+│       │   ├── common/
+│       │   │   ├── TransaccionForm.jsx
+│       │   │   ├── TransaccionList.jsx
+│       │   │   └── CategoriaForm.jsx
+│       │   └── ui/
+│       │       └── Stats.jsx
+│       └── pages/
+│           ├── Login.jsx
+│           ├── Register.jsx
+│           ├── Dashboard.jsx
+│           ├── Transacciones.jsx
+│           ├── Categorias.jsx
+│           ├── Simulador.jsx
+│           ├── BalanceConsolidado.jsx
+│           ├── Login.test.jsx
+│           ├── Register.test.jsx
+│           ├── Simulador.test.jsx
+│           ├── BalanceConsolidado.test.jsx
+│           ├── Categorias.test.jsx
+│           └── Transacciones.test.jsx
 │
 ├── database/
 │   └── init.sql
@@ -144,8 +203,6 @@ Proyecto-Final-Prog3/
 ---
 
 ## Funciones Financieras del Proyecto
-
-Estas son las cuatro funcionalidades de análisis financiero que se agregaron en la rama `AppV1.1`, y cómo se relacionan entre sí.
 
 ### 1. Gastos fijos
 
@@ -179,8 +236,6 @@ Se calcula restando los gastos totales a los ingresos registrados, y puede proye
 Transacciones -> Gastos Fijos -> Disponible Mensual -> Capacidad de Endeudamiento
               -> Simulador de Compras -> Cálculo de Ahorro
 ```
-
-Estas funcionalidades convierten la aplicación en una herramienta de análisis financiero personal, manteniendo como base la gestión de transacciones, balances e historial ya existente.
 
 ---
 
@@ -257,7 +312,7 @@ simulaciones
 | PUT | `/transacciones/:id` | Editar transacción | Si |
 | DELETE | `/transacciones/:id` | Eliminar transacción | Si |
 
-### Filtros e Historial (`/api/transacciones`, `/api/historial`)
+### Filtros e Historial
 
 | Método | Ruta | Descripción | Auth |
 |--------|------|-------------|------|
@@ -275,15 +330,15 @@ simulaciones
 | GET | `/resumen` | Resumen mensual | Si | Redis 5min |
 | GET | `/estadisticas` | Estadísticas generales | Si | Redis 5min |
 
-### Simulador de compras y balance consolidado (`/api/simulaciones`, `/api`)
+### Simulador de compras y balance consolidado
 
 | Método | Ruta | Descripción | Auth | Caché |
 |--------|------|-------------|------|-------|
-| GET | `/simulaciones` | Listar simulaciones guardadas del usuario | Si | — |
-| POST | `/simulaciones` | Crear y guardar una simulación de compra | Si | — |
+| GET | `/simulaciones` | Listar simulaciones guardadas | Si | — |
+| POST | `/simulaciones` | Crear y guardar una simulación | Si | — |
 | DELETE | `/simulaciones/:id` | Eliminar una simulación | Si | — |
-| POST | `/simulador/comprar` | Simular una compra en cuotas (con opción de guardarla) | Si | — |
-| GET | `/balance-consolidado` | Balance actual + ingresos/gastos fijos + simulaciones activas + proyección a 6 meses | Si | Redis 5min |
+| POST | `/simulador/comprar` | Simular una compra en cuotas | Si | — |
+| GET | `/balance-consolidado` | Balance actual + proyección a 6 meses | Si | Redis 5min |
 
 ---
 
@@ -329,6 +384,36 @@ docker compose down -v
 
 ---
 
+## Cómo Correr los Tests
+
+### Tests del backend (Jest)
+
+```bash
+# Entrar al contenedor del backend
+docker compose exec backend sh
+
+# Correr todos los tests
+npm test
+
+# Salir del contenedor
+exit
+```
+
+### Tests del frontend (React Testing Library)
+
+```bash
+# Entrar al contenedor del frontend
+docker compose exec frontend sh
+
+# Correr todos los tests
+npm test -- --watchAll=false
+
+# Salir del contenedor
+exit
+```
+
+---
+
 ## Notas de build, dist/ y archivos requeridos
 
 El backend usa TypeScript para los modelos (`models/*.ts`). Antes de ejecutarse, ese código se compila a JavaScript dentro de `backend/dist/`.
@@ -337,7 +422,6 @@ El backend usa TypeScript para los modelos (`models/*.ts`). Antes de ejecutarse,
 - Si `dist/` no existe o está desactualizada, el servidor puede fallar con `MODULE_NOT_FOUND`.
 - `backend/copy-config.js` es un script que copia `config/*.js` a `dist/config/` después de compilar. Se versiona porque es parte del proceso de build.
 - `backend/package-lock.json` se versiona para fijar las versiones de dependencias y garantizar instalaciones reproducibles entre los integrantes.
-- `backend/utils/categoriaHelpers.ts` es la fuente en TypeScript. Se mantiene además `backend/utils/categoriaHelpers.js` ya compilado en el repo, por compatibilidad temporal con los controllers actuales.
 
 ### Comandos recomendados
 
@@ -354,12 +438,6 @@ docker compose up -d --build
 # Ver logs del backend
 docker compose logs backend --tail 50 -f
 ```
-
-### Pasos rápidos para colaboradores
-
-1. `git pull`
-2. `npm install`
-3. `docker compose up -d --build` (o `npm run build` + `npm start` si se trabaja sin Docker)
 
 ### Problemas comunes
 
@@ -385,22 +463,16 @@ main                        <- estructura base del proyecto
     └── alumno5_strizzi     <- Roman Strizzi (Transacciones)
 
 dev
-└── AppV1.1                 <- ampliacion: Funciones Financieras
-    (commits secuenciales sobre la misma rama, en este orden:)
-    1. Nicolas Castellini   <- Modelo Transaccion + naturaleza (fijo/variable)
-    2. Roman Strizzi        <- Modelo Simulacion + CRUD
-    3. Nazareno Negrete     <- Logica del simulador (calculo de cuotas)
-    4. Alejo Sanger         <- Balance consolidado
-    5. Julian Peralta       <- Cache, validaciones, tests e integracion
+└── AppV1.1                 <- ampliacion: Funciones Financieras + Frontend completo
 ```
 
 ### Flujo de trabajo — Entrega original
 
 Se trabajó con una rama por integrante. El flujo fue secuencial: cada integrante tomó `dev` actualizada, creó su propia rama, desarrolló su parte, hizo push y abrió un Pull Request hacia `dev`. Una vez aprobado y mergeado, el siguiente tomó la base actualizada y continuó. Al finalizar el desarrollo completo, se realizó un último Pull Request de `dev` hacia `main` como entrega definitiva.
 
-### Flujo de trabajo — Ampliación Funciones Financieras
+### Flujo de trabajo — Ampliación (AppV1.1)
 
-Para el módulo de análisis financiero se dividió el trabajo en 5 tracks dependientes entre sí (modelo → simulación → lógica de cuotas → balance consolidado → caché/validaciones/tests), todos sobre una rama compartida `AppV1.1`. Cada integrante tomó la rama actualizada con el trabajo del anterior, agregó su parte y commiteó en el orden definido, ya que cada track depende de los archivos creados por el anterior (por ejemplo, el balance consolidado necesita el modelo `Simulacion` y el campo `naturaleza` ya creados).
+Cada integrante tomó `AppV1.1` actualizada, creó su propia rama, desarrolló su parte, hizo push y abrió un Pull Request hacia `AppV1.1`. El orden de trabajo fue secuencial ya que cada track dependía del anterior.
 
 Cada integrante tiene al menos un commit en su rama correspondiente y su Pull Request aprobado.
 
@@ -571,18 +643,7 @@ Respuesta esperada:
 - Método: `GET`
 - URL: `http://localhost:3001/api/balance`
 
-Respuesta esperada (sin transacciones cargadas):
-
-```json
-{
-    "balance": 0,
-    "totalIngresos": 0,
-    "totalGastos": 0,
-    "fromCache": false
-}
-```
-
-Respuesta esperada (con transacciones cargadas):
+Respuesta esperada:
 
 ```json
 {
@@ -593,7 +654,7 @@ Respuesta esperada (con transacciones cargadas):
 }
 ```
 
-> La segunda vez que se llama al mismo endpoint, `fromCache` devuelve `true` porque Redis ya tiene el resultado guardado. Si se cargan transacciones nuevas y la caché todavía no expiró, conviene reiniciar Redis para ver los valores actualizados: `docker compose restart redis`.
+> La segunda vez que se llama al mismo endpoint, `fromCache` devuelve `true` porque Redis ya tiene el resultado guardado.
 
 ### 8. Resumen mensual
 
@@ -622,7 +683,7 @@ Respuesta esperada:
 - Método: `GET`
 - URL: `http://localhost:3001/api/estadisticas`
 
-Respuesta esperada (sin transacciones cargadas):
+Respuesta esperada:
 
 ```json
 {
@@ -638,7 +699,7 @@ Respuesta esperada (sin transacciones cargadas):
 }
 ```
 
-### 10. Simulador de compras (sin guardar)
+### 10. Simulador de compras
 
 - Método: `POST`
 - URL: `http://localhost:3001/api/simulador/comprar`
@@ -654,7 +715,7 @@ Respuesta esperada (sin transacciones cargadas):
 }
 ```
 
-Respuesta esperada (sistema de amortización francés):
+Respuesta esperada:
 
 ```json
 {
@@ -667,15 +728,14 @@ Respuesta esperada (sistema de amortización francés):
         "valorCuota": 22200.50,
         "totalFinanciado": 133203.00,
         "cuotas": [
-            { "mes": 1, "fecha": "2026-07-01", "valorCuota": 22200.50, "interes": 4200.00, "amortizacion": 18000.50, "saldoRestante": 115202.50 },
-            { "mes": 2, "fecha": "2026-08-01", "valorCuota": 22200.50, "interes": 4032.09, "amortizacion": 18168.41, "saldoRestante": 97034.09 }
+            { "mes": 1, "fecha": "2026-07-01", "valorCuota": 22200.50, "interes": 4200.00, "amortizacion": 18000.50, "saldoRestante": 115202.50 }
         ],
         "impactoBalanceMensual": -22200.50
     }
 }
 ```
 
-> Si no se envía `tasaInteresMensual` (o se manda 0), el cálculo es simple: `precioTotal / cantidadCuotas`, sin intereses ni tabla de amortización detallada.
+> Si no se envía `tasaInteresMensual` (o se manda 0), el cálculo es simple: `precioTotal / cantidadCuotas`.
 
 ### 11. Guardar una simulación
 
@@ -735,8 +795,6 @@ Respuesta esperada:
 - Método: `GET`
 - URL: `http://localhost:3001/api/balance-consolidado`
 
-Devuelve el balance actual junto con una proyección a futuro que tiene en cuenta ingresos y gastos fijos, y las cuotas de simulaciones activas.
-
 Respuesta esperada:
 
 ```json
@@ -749,11 +807,7 @@ Respuesta esperada:
         "simulacionesActivas": [],
         "proyeccionMensual": [
             { "mes": "2026-07", "ingresosFijos": 150000, "gastosFijos": 50000, "cuotasSimuladas": 0, "balanceProyectado": 100000 },
-            { "mes": "2026-08", "ingresosFijos": 150000, "gastosFijos": 50000, "cuotasSimuladas": 0, "balanceProyectado": 100000 },
-            { "mes": "2026-09", "ingresosFijos": 150000, "gastosFijos": 50000, "cuotasSimuladas": 0, "balanceProyectado": 100000 },
-            { "mes": "2026-10", "ingresosFijos": 150000, "gastosFijos": 50000, "cuotasSimuladas": 0, "balanceProyectado": 100000 },
-            { "mes": "2026-11", "ingresosFijos": 150000, "gastosFijos": 50000, "cuotasSimuladas": 0, "balanceProyectado": 100000 },
-            { "mes": "2026-12", "ingresosFijos": 150000, "gastosFijos": 50000, "cuotasSimuladas": 0, "balanceProyectado": 100000 }
+            { "mes": "2026-08", "ingresosFijos": 150000, "gastosFijos": 50000, "cuotasSimuladas": 0, "balanceProyectado": 100000 }
         ],
         "balanceNetoProyectado": 600000,
         "fromCache": false
@@ -763,7 +817,7 @@ Respuesta esperada:
 
 ### 15. Script de prueba automatizado
 
-El proyecto incluye un script de Node.js que recorre los principales endpoints en secuencia (health check, registro, login, transacciones, categorías, balance, simulador y balance consolidado) y muestra el resultado de cada paso por consola. Es útil como humo test rápido después de levantar el proyecto:
+El proyecto incluye un script de Node.js que recorre los principales endpoints en secuencia y muestra el resultado por consola:
 
 ```bash
 node test-endpoints.js
@@ -783,14 +837,19 @@ node test-endpoints.js
 - **[cors](https://github.com/expressjs/cors)** — Configuración de Cross-Origin Resource Sharing
 - **[morgan](https://github.com/expressjs/morgan)** — Logging de peticiones HTTP
 - **[redis](https://github.com/redis/node-redis)** — Cliente Redis para caché
-- **[express-validator](https://express-validator.github.io/)** — Validaciones de los endpoints del simulador y de la naturaleza de las transacciones
+- **[express-validator](https://express-validator.github.io/)** — Validaciones de los endpoints
 
 ### Frontend
 - **[React 18](https://react.dev/)** — Biblioteca para interfaces de usuario
+- **[React Router v6](https://reactrouter.com/)** — Navegación SPA con rutas protegidas
+- **[Tailwind CSS](https://tailwindcss.com/)** — Framework de estilos utilitario
+- **[Axios](https://axios-http.com/)** — Cliente HTTP con interceptor JWT
+- **[React Hot Toast](https://react-hot-toast.com/)** — Notificaciones
+- **[React Testing Library](https://testing-library.com/)** — Tests de componentes
 
 ### Infraestructura
 - **[Docker](https://docs.docker.com/)** — Contenedores
-- **[Docker Compose](https://docs.docker.com/compose/install/)** — Orquestación multi-contenedor
+- **[Docker Compose](https://docs.docker.com/compose/)** — Orquestación multi-contenedor
 - **[PostgreSQL 15](https://www.postgresql.org/docs/15/)** — Base de datos relacional
 - **[Redis 7](https://redis.io/docs/)** — Caché en memoria
 - **[Caddy 2](https://caddyserver.com/docs/)** — Reverse proxy
