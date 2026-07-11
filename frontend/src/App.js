@@ -6,15 +6,11 @@ import Navbar from './components/layout/Navbar';
 import Sidebar from './components/layout/Sidebar';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 import Transacciones from './pages/Transacciones';
 import Categorias from './pages/Categorias';
 import Simulador from './pages/Simulador';
 import BalanceConsolidado from './pages/BalanceConsolidado';
-
-// Placeholder para que las otras personas puedan conectar sus páginas
-const Placeholder = ({ nombre }) => (
-  <div className="p-8 text-gray-500 text-sm">Página "{nombre}" — en construcción</div>
-);
 
 // Layout para rutas autenticadas: Navbar + Sidebar + contenido
 function AppLayout() {
@@ -57,9 +53,9 @@ function AppRoutes() {
       {/* Rutas protegidas con layout */}
       <Route element={<PrivateRoute />}>
         <Route element={<AppLayout />}>
-          <Route path="/dashboard" element={<Placeholder nombre="Dashboard" />} />
-          <Route path="/transacciones" element={<Placeholder nombre="Transacciones" />} />
-          <Route path="/categorias" element={<Placeholder nombre="Categorías" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/transacciones" element={<Transacciones />} />
+          <Route path="/categorias" element={<Categorias />} />
           <Route path="/simulador" element={<Simulador />} />
           <Route path="/balance" element={<BalanceConsolidado />} />
         </Route>
